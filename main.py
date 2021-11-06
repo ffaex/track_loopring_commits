@@ -1,5 +1,7 @@
+import json
 from time import sleep
 import requests
+from requests.api import request
 from useful_stuff import pretty_response, write_to_file
 
 
@@ -22,9 +24,30 @@ def get_branches(repo):
     request = requests.get(url)
     return request.json()
 
+def get_commits(repo):
+    shas = []
+    url = '{}/repos/{}/{}/commits'.format(BASE_URL, ORG, repo)
+    request = requests.get(url)
+    json_data = request.json()
+    for i in json_data:
+        shas.append(i['sha'])
+    return shas
+
+def get_commit(repo, commit_sha):
+    url = '{}/repos/{}/{}/commits/{}'.format(BASE_URL, ORG, repo, commit_sha)
+    request = requests.get(url)
+    json_data = request.json()
+    return json_data
+
+
 def main():
-    repos = get_repos()
-    print(get_branches(repos[-3]))
+    repo = get_repos()[-3]
+    shas = get_commits(repo)
+    tmp = get_commit(repo, shas[2])
+
+    write_to_file('commit_data.json', pretty_response(tmp))
+    write_to_file('commits.json', pretty_response(get_commits(repo)))
+    #print(get_branches(repos[-3]))
 
 
 main()
