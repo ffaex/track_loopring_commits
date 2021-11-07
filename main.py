@@ -59,13 +59,23 @@ def get_commit_urls(repo, commit_sha):
     return raw_urls
 
 def insert_hash(hash, repo):
-    sql = "INSERT INTO hashes (hash, repo_name) VALUES (%s, %s)"
+    sql = "INSERT IGNORE INTO hashes (hash, repo_name) VALUES (%s, %s)"
     val = (hash, repo)
     mycursor.execute(sql, val)
     mydb.commit()
 
-def check_if_hash_exists():
-    sql = "SELECT 1 FROM hashes WHERE hash = 'hello' LIMIT 1;" # TODO
+def check_if_hash_exists(repo, hash):
+    #sql = f'SELECT hash, repo_name from hashes WHERE repo_name={repo}'
+    #val = (repo,)
+    mycursor.execute("SELECT hash, repo_name from hashes WHERE repo_name = 'whitepaper'")
+    myresult = mycursor.fetchall()
+    mydb.commit()
+    for i in myresult:
+        if i[0] == hash:
+            return True
+    return False
+
+    #sql = "SELECT 1 FROM hashes WHERE hash = 'hello' LIMIT 1;" # TODO
 
 def insert_repos(repos):
     sql = 'INSERT IGNORE INTO repos (repo_name) VALUES (%s)'  
@@ -82,18 +92,33 @@ def check_keywords(url):
     return False
     pass
 
+
+
 def main():
     repo = get_repos()[-3]
     shas = get_commits_shas(repo)
-    insert_hash(shas[2], repo)
+    #insert_hash(shas[2], repo)
     urls = get_commit_urls(repo, shas[2])
     
 
     #write_to_file('raw_urls.json', pretty_response(get_commit_content(urls)))
     write_to_file('raw_urls.json', pretty_response(urls))
-    #write_to_file('commits.json', pretty_response(get_commits(repo)))
+    #write_to_file('commits.json', pretty_response(shas))
     #print(get_branches(repos[-3]))
+    url = '{}/repos/{}/{}/commits'.format(BASE_URL, ORG, repo)
+    json_data = requests.get(url).json()
+    write_to_file('commits.json', pretty_response(json_data))
+
+
 
 
 #main()
-insert_repos(get_repos())
+#insert_repos(get_repos())
+
+#repos = get_repos()
+print(check_if_hash_exists('whitepaper', '7c0d341aef7c54dd1dae24fe41727e99083bec2e'))
+
+# for repo in repos:
+#     shas = get_commits_shas(repo)
+#     for sha in shas:
+#         insert_hash(sha, repo)
