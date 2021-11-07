@@ -56,19 +56,26 @@ def get_commit_urls(repo, commit_sha):
     
     return raw_urls
 
-def insert_hash(hash):
-    sql = "INSERT INTO hashes (hash) VALUES (%s)"
-    val = hash
-    mycursor.execute(sql, (val,))
+def insert_hash(hash, repo):
+    sql = "INSERT INTO hashes (hash, repo_name) VALUES (%s, %s)"
+    val = (hash, repo)
+    mycursor.execute(sql, val)
     mydb.commit()
 
 def check_if_hash_exists():
     sql = "SELECT 1 FROM hashes WHERE hash = 'hello' LIMIT 1;" # TODO
 
+def insert_repos(repos):
+    sql = 'INSERT IGNORE INTO repos (repo_name) VALUES (%s)'  
+    for repo in repos:
+        val = (repo,)
+        mycursor.execute(sql, val)
+        mydb.commit()
 
 def main():
     repo = get_repos()[-3]
     shas = get_commits_shas(repo)
+    insert_hash(shas[2], repo)
     urls = get_commit_urls(repo, shas[2])
     
 
@@ -79,4 +86,4 @@ def main():
 
 
 #main()
-insert_hash('hello')
+insert_repos(get_repos())
