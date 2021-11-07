@@ -6,7 +6,7 @@ TOKEN = os.getenv('APIKEY')
 print(TOKEN)
 CHAT_ID = os.getenv('CHAT_ID')
 msg = 'test'
-def send_message():
+def send_message(msg):
     bot = telegram.Bot(token=TOKEN)
     bot.sendMessage(chat_id = CHAT_ID, text = msg)
 

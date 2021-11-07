@@ -8,11 +8,13 @@ from time import sleep
 import requests
 from requests.api import request
 from useful_stuff import pretty_response, write_to_file
+from telegram1 import send_message
+from time import sleep
 
 
 BASE_URL = 'https://api.github.com'
 ORG = 'Loopring'
-KEYWORDS = ['GME', 'Gamestop']
+KEYWORDS = [' GME ', 'Gamestop']
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -152,13 +154,17 @@ def main():
             print('amount of files: ' + str(len(urls)))
             for url in urls:
                 if check_keywords(url):
+                    send_message(f'{url} there is somewhere one of the keywords found')
                     print('BIG')
                     print(url)
     #t1 = time.time()
     #print('total time: ', t1-t0)
 
-main()
-    # repo = get_repos()[-3]
+while True:
+    main()
+    print('sleeping now')
+    sleep(60*10)
+        # repo = get_repos()[-3]
     # shas = get_commits_shas(repo)
     # #insert_hash(shas[2], repo)
     # urls = get_commit_urls(repo, shas[2])
