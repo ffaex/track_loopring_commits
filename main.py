@@ -160,7 +160,8 @@ def main():
 while True:
     main()
     print('sleeping now')
-    sleep(60*1)
+    minutes = 60
+    sleep(60*minutes)
         # repo = get_repos()[-3]
     # shas = get_commits_shas(repo)
     # #insert_hash(shas[2], repo)
