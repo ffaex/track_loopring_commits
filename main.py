@@ -1,4 +1,5 @@
 import json
+import mysql.connector
 from time import sleep
 import requests
 from requests.api import request
@@ -7,6 +8,15 @@ from useful_stuff import pretty_response, write_to_file
 
 BASE_URL = 'https://api.github.com'
 ORG = 'Loopring'
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="password",
+  database="hashes"
+)
+
+mycursor = mydb.cursor()
 
 def get_repos():
     repo_list = []
@@ -46,6 +56,14 @@ def get_commit_urls(repo, commit_sha):
     
     return raw_urls
 
+def insert_hash(hash):
+    sql = "INSERT INTO hashes (hash) VALUES (%s)"
+    val = hash
+    mycursor.execute(sql, (val,))
+    mydb.commit()
+
+def check_if_hash_exists():
+    sql = "SELECT 1 FROM hashes WHERE hash = 'hello' LIMIT 1;" # TODO
 
 
 def main():
@@ -60,4 +78,5 @@ def main():
     #print(get_branches(repos[-3]))
 
 
-main()
+#main()
+insert_hash('hello')
