@@ -39,6 +39,14 @@ def get_commit(repo, commit_sha):
     json_data = request.json()
     return json_data
 
+def get_commit_content(commit):
+    raw_urls = []
+    files = commit["files"]
+    for dictiniary in files:
+        raw_urls.append(dictiniary["raw_url"])
+    
+    return raw_urls
+
 
 def main():
     repo = get_repos()[-3]
