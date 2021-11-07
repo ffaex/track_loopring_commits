@@ -50,12 +50,12 @@ def get_commits_shas(repo):
         try:
             commit = i['sha']
             tmp = i['commit']['committer']['date']
-            #datetime.datetime.strptime(tmp,"%Y-%m-%dT%H:%M:%SZ")
             now = datetime.now()
             pretty_date_delta = datetime.strptime(tmp,"%Y-%m-%dT%H:%M:%SZ") - now
             if pretty_date_delta.days *(-1) > 5:
                 print('skipped cause too old')
-                continue
+                return shas
+                
             shas.append(i['sha'])
         except Exception as e:
             print(e + 'line 58')
@@ -85,8 +85,6 @@ def insert_hash(hash, repo):
     mydb.commit()
 
 def check_if_hash_exists(repo, hash):
-    #sql = f'SELECT hash, repo_name from hashes WHERE repo_name={repo}'
-    #val = (repo,)
     mycursor.execute("SELECT hash, repo_name from hashes WHERE repo_name = 'whitepaper'")
     myresult = mycursor.fetchall()
     mydb.commit()
@@ -105,8 +103,6 @@ def insert_repos(repos):
         mydb.commit()
 
 def check_keywords(url):
-    #raw_data = requests.get(url).text
-    # really bad solution
     if url[-3:] == 'apk':
         print('apk extension')
         return False
@@ -163,7 +159,7 @@ def main():
 while True:
     main()
     print('sleeping now')
-    sleep(60*10)
+    sleep(60*1)
         # repo = get_repos()[-3]
     # shas = get_commits_shas(repo)
     # #insert_hash(shas[2], repo)
