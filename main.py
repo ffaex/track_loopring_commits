@@ -58,7 +58,8 @@ def get_commits_shas(repo):
                 
             shas.append(i['sha'])
         except Exception as e:
-            print(e + 'line 58')
+            print(e)
+            print('line 58')
     return shas
 
 def get_commit_urls(repo, commit_sha):
