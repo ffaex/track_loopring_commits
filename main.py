@@ -51,11 +51,11 @@ def get_commit_urls(repo, commit_sha):
 def main():
     repo = get_repos()[-3]
     shas = get_commits_shas(repo)
-    tmp = get_commit_urls(repo, shas[2])
+    urls = get_commit_urls(repo, shas[2])
     
 
-    #write_to_file('raw_urls.json', pretty_response(get_commit_content(tmp)))
-    write_to_file('raw_urls.json', pretty_response(tmp))
+    #write_to_file('raw_urls.json', pretty_response(get_commit_content(urls)))
+    write_to_file('raw_urls.json', pretty_response(urls))
     #write_to_file('commits.json', pretty_response(get_commits(repo)))
     #print(get_branches(repos[-3]))
 
