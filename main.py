@@ -24,7 +24,7 @@ def get_branches(repo):
     request = requests.get(url)
     return request.json()
 
-def get_commits(repo):
+def get_commits_shas(repo):
     shas = []
     url = '{}/repos/{}/{}/commits'.format(BASE_URL, ORG, repo)
     request = requests.get(url)
@@ -33,14 +33,13 @@ def get_commits(repo):
         shas.append(i['sha'])
     return shas
 
-def get_commit(repo, commit_sha):
+def get_commit_urls(repo, commit_sha):
+    raw_urls = []
+
     url = '{}/repos/{}/{}/commits/{}'.format(BASE_URL, ORG, repo, commit_sha)
     request = requests.get(url)
-    json_data = request.json()
-    return json_data
+    commit = request.json()
 
-def get_commit_content(commit):
-    raw_urls = []
     files = commit["files"]
     for dictiniary in files:
         raw_urls.append(dictiniary["raw_url"])
@@ -48,14 +47,15 @@ def get_commit_content(commit):
     return raw_urls
 
 
+
 def main():
     repo = get_repos()[-3]
-    shas = get_commits(repo)
-    tmp = get_commit(repo, shas[2])
+    shas = get_commits_shas(repo)
+    tmp = get_commit_urls(repo, shas[2])
     
 
-    write_to_file('raw_urls.json', pretty_response(get_commit_content(tmp)))
-    write_to_file('commit_data.json', pretty_response(tmp))
+    #write_to_file('raw_urls.json', pretty_response(get_commit_content(tmp)))
+    write_to_file('raw_urls.json', pretty_response(tmp))
     #write_to_file('commits.json', pretty_response(get_commits(repo)))
     #print(get_branches(repos[-3]))
 
