@@ -1,4 +1,5 @@
 import json
+import re
 import mysql.connector
 from time import sleep
 import requests
@@ -8,6 +9,7 @@ from useful_stuff import pretty_response, write_to_file
 
 BASE_URL = 'https://api.github.com'
 ORG = 'Loopring'
+KEYWORDS = ['GME', 'Gamestop']
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -71,6 +73,14 @@ def insert_repos(repos):
         val = (repo,)
         mycursor.execute(sql, val)
         mydb.commit()
+
+def check_keywords(url):
+    raw_data = requests.get(url).text
+    for i in KEYWORDS:
+        if re.search(i, raw_data, re.IGNORECASE):
+            return True
+    return False
+    pass
 
 def main():
     repo = get_repos()[-3]
