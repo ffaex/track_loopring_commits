@@ -51,7 +51,7 @@ def get_commits_shas(repo):
             #datetime.datetime.strptime(tmp,"%Y-%m-%dT%H:%M:%SZ")
             now = datetime.now()
             pretty_date_delta = datetime.strptime(tmp,"%Y-%m-%dT%H:%M:%SZ") - now
-            if pretty_date_delta.days *(-1) > 30:
+            if pretty_date_delta.days *(-1) > 5:
                 print('skipped cause too old')
                 continue
             shas.append(i['sha'])
@@ -103,7 +103,20 @@ def insert_repos(repos):
         mydb.commit()
 
 def check_keywords(url):
-    raw_data = requests.get(url).text
+    #raw_data = requests.get(url).text
+    # really bad solution
+    if url[-3:] == 'apk':
+        print('apk extension')
+        return False
+        
+    print(url)
+
+
+    raw_data = requests.get(url)
+    if raw_data.headers.get('content-type')[0:4] != 'text':
+        print('wrong data type??! ' + raw_data.headers.get('content-type'))
+        return False
+    raw_data = raw_data.text
     print('checking keywords, len of string: ' + str(len(raw_data)))
     for i in KEYWORDS:
         if re.search(i, raw_data, re.IGNORECASE):
@@ -134,7 +147,9 @@ def main():
                 print('exists')
                 continue
             print('new')
+            insert_hash(sha, repo)
             urls = get_commit_urls(repo, sha)
+            print('amount of files: ' + str(len(urls)))
             for url in urls:
                 if check_keywords(url):
                     print('BIG')
