@@ -52,9 +52,11 @@ def main():
     repo = get_repos()[-3]
     shas = get_commits(repo)
     tmp = get_commit(repo, shas[2])
+    
 
+    write_to_file('raw_urls.json', pretty_response(get_commit_content(tmp)))
     write_to_file('commit_data.json', pretty_response(tmp))
-    write_to_file('commits.json', pretty_response(get_commits(repo)))
+    #write_to_file('commits.json', pretty_response(get_commits(repo)))
     #print(get_branches(repos[-3]))
 
 
